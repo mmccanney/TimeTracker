@@ -1,0 +1,3 @@
+/media/mmccanney/Data1/Zencat/Projects/TimeTracker/cmake-build-debug/CMakeFiles/TimeTracker.dir
+/media/mmccanney/Data1/Zencat/Projects/TimeTracker/cmake-build-debug/CMakeFiles/edit_cache.dir
+/media/mmccanney/Data1/Zencat/Projects/TimeTracker/cmake-build-debug/CMakeFiles/rebuild_cache.dir
