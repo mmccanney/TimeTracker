@@ -32,9 +32,9 @@
 #define ID_HISTORY_SUMMARY 1002
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class MyFrame1
+/// Class MyFrame
 ///////////////////////////////////////////////////////////////////////////////
-class MyFrame1 : public wxFrame
+class MyFrame : public wxFrame
 {
 	private:
 
@@ -42,8 +42,8 @@ class MyFrame1 : public wxFrame
 		wxMenuBar* m_menubar1;
 		wxMenu* mnuAdmin;
 		wxMenu* mnuReports;
-		wxStaticText* m_staticText2;
-		wxStaticText* m_staticText4;
+		wxStaticText* m_txtCurrentJob;
+		wxStaticText* m_txtElapsed;
 		wxComboBox* m_cbJobsMru;
 		wxButton* m_btnStartStop;
 
@@ -56,9 +56,9 @@ class MyFrame1 : public wxFrame
 
 	public:
 
-		MyFrame1( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,140 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,140 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
-		~MyFrame1();
+		~MyFrame();
 
 };
 

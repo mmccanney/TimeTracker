@@ -5,11 +5,11 @@
 // PLEASE DO *NOT* EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include "noname.h"
+#include "wxMainFrame.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+MyFrame::MyFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -43,9 +43,9 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Logging:") ), wxVERTICAL );
 
-	m_staticText2 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("- no logging -"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
-	m_staticText2->Wrap( -1 );
-	sbSizer1->Add( m_staticText2, 0, wxALL|wxEXPAND, 10 );
+	m_txtCurrentJob = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, wxT("- no logging -"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
+	m_txtCurrentJob->Wrap( -1 );
+	sbSizer1->Add( m_txtCurrentJob, 0, wxALL|wxEXPAND, 10 );
 
 
 	bSizer5->Add( sbSizer1, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
@@ -53,9 +53,9 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Elapsed:") ), wxVERTICAL );
 
-	m_staticText4 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText4->Wrap( -1 );
-	sbSizer2->Add( m_staticText4, 0, wxALL, 10 );
+	m_txtElapsed = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_txtElapsed->Wrap( -1 );
+	sbSizer2->Add( m_txtElapsed, 0, wxALL, 10 );
 
 
 	bSizer5->Add( sbSizer2, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
@@ -82,15 +82,15 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Centre( wxBOTH );
 
 	// Connect Events
-	mnuAdmin->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame1::mni_editJobsOnMenuSelection ), this, mni_editJobs->GetId());
-	mnuAdmin->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame1::mniEditTodaysJobHistoryOnMenuSelection ), this, mniEditTodaysJobHistory->GetId());
-	mnuReports->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame1::mniHistorySummaryOnMenuSelection ), this, mniHistorySummary->GetId());
-	m_btnStartStop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::m_btnStartStopOnButtonClick ), NULL, this );
+	mnuAdmin->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame::mni_editJobsOnMenuSelection ), this, mni_editJobs->GetId());
+	mnuAdmin->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame::mniEditTodaysJobHistoryOnMenuSelection ), this, mniEditTodaysJobHistory->GetId());
+	mnuReports->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame::mniHistorySummaryOnMenuSelection ), this, mniHistorySummary->GetId());
+	m_btnStartStop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_btnStartStopOnButtonClick ), NULL, this );
 }
 
-MyFrame1::~MyFrame1()
+MyFrame::~MyFrame()
 {
 	// Disconnect Events
-	m_btnStartStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::m_btnStartStopOnButtonClick ), NULL, this );
+	m_btnStartStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame::m_btnStartStopOnButtonClick ), NULL, this );
 
 }
