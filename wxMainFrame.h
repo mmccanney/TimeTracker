@@ -23,7 +23,10 @@
 #include <wx/statbox.h>
 #include <wx/combobox.h>
 #include <wx/button.h>
+#include <wx/timer.h>
 #include <wx/frame.h>
+#include <wx/listctrl.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -31,34 +34,64 @@
 #define ID_EDIT_TODAYS_JOB_HISTORY 1001
 #define ID_HISTORY_SUMMARY 1002
 
+class dlgJobsList;
+
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MyFrame
 ///////////////////////////////////////////////////////////////////////////////
 class MyFrame : public wxFrame
 {
 	private:
+        const std::string StartText {"Start"};
+        const std::string StopText {"Stop"};
 
 	protected:
 		wxMenuBar* m_menubar1;
 		wxMenu* mnuAdmin;
 		wxMenu* mnuReports;
-		wxStaticText* m_txtCurrentJob;
-		wxStaticText* m_txtElapsed;
-		wxComboBox* m_cbJobsMru;
-		wxButton* m_btnStartStop;
+		wxStaticText* txtCurrentJob;
+		wxStaticText* txtElapsed;
+		wxComboBox* cbJobsMru;
+		wxButton* btnStartStop;
+		wxTimer tmrElapsed;
+        dlgJobsList* dlgJobs;
+        int ElapsedSecs = 0;
 
 		// Virtual event handlers, overide them in your derived class
-		virtual void mni_editJobsOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
-		virtual void mniEditTodaysJobHistoryOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
-		virtual void mniHistorySummaryOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
-		virtual void m_btnStartStopOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void mniAdmin_EditJobs_Click( wxCommandEvent& event );
+		virtual void mniAdmin_EditJobHistory_Click( wxCommandEvent& event ) { event.Skip(); }
+		virtual void mniReports_HistorySummary_Click( wxCommandEvent& event ) { event.Skip(); }
+		virtual void cbJobsMru_ListDown( wxCommandEvent& event ) { event.Skip(); }
+		virtual void btnStartStop_Click( wxCommandEvent& event );
+		virtual void tmrElapsed_Tick( wxTimerEvent& event );
 
 
 	public:
 
-		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,140 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		explicit MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,140 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MyFrame();
 
 };
 
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class dlgJobsList
+///////////////////////////////////////////////////////////////////////////////
+class dlgJobsList : public wxDialog
+{
+private:
+
+protected:
+    wxStaticText* m_staticText3;
+    wxListCtrl* lcJobList;
+    wxButton* btnJobAdd;
+    wxButton* btnJobDelete;
+    wxButton* btnJobRetire;
+
+public:
+
+    explicit dlgJobsList( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Jobs List"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 315,518 ), long style = wxDEFAULT_DIALOG_STYLE );
+    ~dlgJobsList();
+
+};

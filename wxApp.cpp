@@ -8,13 +8,15 @@ bool MyApp::OnInit()
 {
 
     //MyFrame *frame = new MyFrame();
-    MyFrame *frame = new MyFrame(NULL, -1, "Time Tracker", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+    wxSize sz { 500, 160 };
+    MyFrame *frame = new MyFrame(NULL, -1, "Time Tracker", wxDefaultPosition, sz, wxDEFAULT_FRAME_STYLE);
+    //MyFrame *frame = new MyFrame(NULL, -1, "Time Tracker", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
     frame->Show(true);
 
-    if (argc > 0) {
-        wxString fn {argv[1]};
-        //frame->ReadMprjFile(fn);
-    }
+//    if (argc > 0) {
+//        wxString fn {argv[1]};
+//        frame->ReadMprjFile(fn);
+//    }
 
     return true;
 }
