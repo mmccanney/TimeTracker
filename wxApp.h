@@ -9,7 +9,8 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
-//#include <wx/cmdline.h>
+#include <sqlite3.h>
+#include "tcontroller.h"
 
 enum
 {
@@ -20,6 +21,13 @@ class MyApp : public wxApp
 {
 public:
     virtual bool OnInit();
+
+    ~MyApp() override;
+
+private:
+    sqlite3* db = nullptr;
+
+    tController* Controller;
 };
 
 
