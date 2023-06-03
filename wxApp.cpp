@@ -28,6 +28,8 @@ bool MyApp::OnInit()
     Controller->SetView(frame);
     frame->SetController(Controller);
 
+    Controller->JobListChanged();
+
     return true;
 }
 

@@ -7,6 +7,7 @@
 
 #include "wxViews.h"
 
+
 ///////////////////////////////////////////////////////////////////////////
 
 MainView::MainView( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
@@ -119,7 +120,7 @@ void MainView::btnStartStop_Click( wxCommandEvent& event ) {
 }
 
 void MainView::mniAdmin_EditJobs_Click( wxCommandEvent& event ) {
-    //dlgJobsList* dlg = new dlgJobsList(this);
+    //dlgJobsList* dlg = new dlgJobsList(this);     // can't do this as it'll leak memory (ie: who's deleting it?)
     dlgJobs->Show();
 
     //delete dlg;
@@ -130,6 +131,11 @@ void MainView::SetController(tController *pc) {
     pController = pc;
 }
 
+void MainView::UpdateMruJobsList(vector<ttj::JobRec> recs) {
+    for (auto e: recs) {
+        cbJobsMru->Append(e.name);
+    }
+}
 
 dlgJobsList::dlgJobsList( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {

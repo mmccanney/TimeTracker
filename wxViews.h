@@ -28,6 +28,7 @@
 #include <wx/listctrl.h>
 #include <wx/dialog.h>
 #include "tcontroller.h"
+#include <vector>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -76,6 +77,7 @@ class MainView : public wxFrame
 		~MainView();
 
         void SetController(tController*);
+        void UpdateMruJobsList(std::vector<ttj::JobRec>);
 };
 
 ///////////////////////////////////////////////////////////////////////////////

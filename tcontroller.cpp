@@ -13,7 +13,7 @@ tController::tController() {
     ttj::Subsc_JobLogRecChanged(this);
 
     // force a load of the MRU jobs
-    JobListChanged();
+    //JobListChanged(); clang tidy says to not call virt mem funcs within ctor. moved to wxApp
 
     //tmrConnection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &tController::Time1sElapsed), 1000);
 }
@@ -62,7 +62,7 @@ void tController::JobStopped(int job_id) {
 void tController::JobListChanged() {
     int rc = ttj::GetActiveJobs(&Jobs);
     if (!rc) {
-        //pView->UpdateMruJobsList(Jobs);
+        pView->UpdateMruJobsList(Jobs);
     }
 }
 void tController::JobLogRecChanged() {
