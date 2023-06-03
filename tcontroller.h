@@ -1,7 +1,6 @@
 #ifndef __tcontroller_h__
 #define __tcontroller_h__
 
-//#include <gtkmm.h>
 #include <vector>
 #include "jobs.h"
 #include "jobevents.h"
