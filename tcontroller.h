@@ -5,6 +5,7 @@
 #include "jobs.h"
 #include "jobevents.h"
 #include "wxViews.h"
+//#include <wx/timer.h>
 
 using std::vector;
 
@@ -31,6 +32,7 @@ public:
     
     //Glib::Timer tmrSecs;
     //sigc::connection tmrConnection;
+    //virtual void tmrElapsed_Tick( wxTimerEvent& event );
     bool Time1sElapsed();
 
     void SetView(MainView*);
