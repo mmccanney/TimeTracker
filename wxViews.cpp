@@ -130,8 +130,11 @@ void MainView::mniAdmin_EditJobs_Click( wxCommandEvent& event ) {
 void MainView::SetController(tController *pc) {
     pController = pc;
 }
-
+void MainView::ClearMruJobsList() {
+    cbJobsMru->Clear();
+}
 void MainView::UpdateMruJobsList(vector<ttj::JobRec> recs) {
+    ClearMruJobsList();
     for (auto e: recs) {
         cbJobsMru->Append(e.name);
     }

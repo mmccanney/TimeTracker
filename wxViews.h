@@ -48,6 +48,7 @@ class MainView : public wxFrame
 	private:
         const std::string StartText {"Start"};
         const std::string StopText {"Stop"};
+        int MruJobsSize = 5;
 
 	protected:
 		wxMenuBar* m_menubar1;
@@ -77,6 +78,9 @@ class MainView : public wxFrame
 		~MainView();
 
         void SetController(tController*);
+
+        int GetMruJobsSize() { return MruJobsSize; };
+        void ClearMruJobsList();
         void UpdateMruJobsList(std::vector<ttj::JobRec>);
 };
 
