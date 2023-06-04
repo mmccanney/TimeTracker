@@ -60,7 +60,7 @@ class MainView : public wxFrame
 		wxButton* btnStartStop;
 		wxTimer tmrElapsed;
         dlgJobsList* dlgJobs;
-        int ElapsedSecs = 0;
+        //int ElapsedSecs = 0;
         tController* pController {};
 
 		// Virtual event handlers, overide them in your derived class
@@ -79,9 +79,20 @@ class MainView : public wxFrame
 
         void SetController(tController*);
 
-        int GetMruJobsSize() { return MruJobsSize; };
         void ClearMruJobsList();
         void UpdateMruJobsList(std::vector<ttj::JobRec>);
+        void ClearLoggingDisplay();
+        void SetLoggingDisplay(const char* display);
+        void UpdateTimeElapsed(const char* time_elapsed);
+        void UpdateMruJobsList(vector<ttj::JobRec>& rec_list);
+        void SetButtonStart();
+        void SetButtonStop();
+        int ShowMasterJobsList();
+        int GetMruJobsSize() { return MruJobsSize; };
+        void SetMruJobsSize(int qty);
+
+
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////

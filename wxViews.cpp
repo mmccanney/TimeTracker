@@ -10,7 +10,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-MainView::MainView( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+MainView::MainView(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -97,20 +97,17 @@ MainView::MainView( wxWindow* parent, wxWindowID id, const wxString& title, cons
 MainView::~MainView()
 {
 	// Disconnect Events
-	cbJobsMru->Disconnect( wxEVT_COMBOBOX_DROPDOWN, wxCommandEventHandler( MainView::cbJobsMru_ListDown ), nullptr, this );
-	btnStartStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainView::btnStartStop_Click ), nullptr, this );
-	this->Disconnect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainView::tmrElapsed_Tick ) );
+	cbJobsMru->Disconnect( wxEVT_COMBOBOX_DROPDOWN, wxCommandEventHandler(MainView::cbJobsMru_ListDown), nullptr, this );
+	btnStartStop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainView::btnStartStop_Click), nullptr, this );
+	this->Disconnect(wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainView::tmrElapsed_Tick));
 
 }
-void MainView::tmrElapsed_Tick( wxTimerEvent& event ) {
-    ElapsedSecs++;
-    std::string s = std::to_string(ElapsedSecs);
-    txtElapsed->SetLabel(s);
+void MainView::tmrElapsed_Tick(wxTimerEvent& event) {
+    if (pController) pController->Time1sElapsed();
 }
-void MainView::btnStartStop_Click( wxCommandEvent& event ) {
+void MainView::btnStartStop_Click(wxCommandEvent& event) {
     if (btnStartStop->GetLabel() == StartText) {
         btnStartStop->SetLabel(StopText);
-        ElapsedSecs = 0;
         tmrElapsed.Start(1000);
     }
     else {
@@ -119,7 +116,7 @@ void MainView::btnStartStop_Click( wxCommandEvent& event ) {
     }
 }
 
-void MainView::mniAdmin_EditJobs_Click( wxCommandEvent& event ) {
+void MainView::mniAdmin_EditJobs_Click(wxCommandEvent& event) {
     //dlgJobsList* dlg = new dlgJobsList(this);     // can't do this as it'll leak memory (ie: who's deleting it?)
     dlgJobs->Show();
 
@@ -130,18 +127,71 @@ void MainView::mniAdmin_EditJobs_Click( wxCommandEvent& event ) {
 void MainView::SetController(tController *pc) {
     pController = pc;
 }
+
+
+void MainView::SetMruJobsSize(int qty) {
+    // don't let the user select a crazy value
+    if (qty > 1 && qty < 20) MruJobsSize = qty;
+}
 void MainView::ClearMruJobsList() {
     cbJobsMru->Clear();
 }
 void MainView::UpdateMruJobsList(vector<ttj::JobRec> recs) {
-    ClearMruJobsList();
-    for (auto e: recs) {
-        cbJobsMru->Append(e.name);
-    }
+    if (!pMruJobs) return;
 
+    ClearMruJobsList();
+
+    int x = 0;
+    // populate the popup menu
+    vector<ttj::JobRec>::iterator itr = rec_list.begin();
+    while (itr != rec_list.end() && x < MruJobsSize) {
+        ttj::JobRec j = *itr;
+        char text[MAX_FIELD_SIZE_NAME + MAX_FIELD_SIZE_DISPLAY + 4];
+        if (strlen(j.display) > 0) sprintf(text, "%s (%s)", j.display, j.name);
+        else sprintf(text, "%s", j.name);
+        pMruJobs->append(text);
+        itr++; x++;
+    }
+    if (MruJobsSize < rec_list.size()) pMruJobs->append("...");
 }
 
-dlgJobsList::dlgJobsList( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+void MainView::SetLoggingDisplay(const char* display) {
+
+    pJobLabel->set_text(display);
+}
+void MainView::UpdateTimeElapsed(const char* time_elapsed) {
+
+    pTimeLabel->set_text(time_elapsed);
+}
+
+void MainView::ShowAllJobsForSelection() {
+    vector<ttj::JobRec> rec_list;
+    pController->GetAllJobs(&rec_list);
+    if (pJobSelDlg) {
+        pJobSelDlg->UpdateJobsList(rec_list);
+        int res = pJobSelDlg->run();
+        if (res == Gtk::RESPONSE_OK) {
+            int jid = pJobSelDlg->SelectedJobId;
+            if (jid > 0) pController->StartLogging(jid, false);
+        }
+        else {
+            // clear the ... from the combo box, otherwise if the user wants to
+            // view the "All Jobs" screen again, they can't until they select a different job
+            pMruJobs->unset_active();
+        }
+
+        pJobSelDlg->hide();
+    }
+}
+
+
+
+
+
+
+//==============================================================================================
+
+dlgJobsList::dlgJobsList(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
