@@ -41,23 +41,23 @@ void tController::JobStarted(const char *name, const char* display, int job_id) 
         sprintf(text, "%s (%s)", display, name);
     else
         std::strcpy(text, name);
-    //pView->SetLoggingDisplay(text);
-    //pView->SetButtonStop();
+    pView->SetLoggingDisplay(text);
+    pView->SetButtonStop();
 }
 bool tController::Time1sElapsed() {
     if (pView && CurrentJobId) {
         CurrentSecs++;
         char tstr[20];
         ttj::SecondsToDurationStr(CurrentSecs, tstr);
-        //pView->UpdateTimeElapsed(tstr);
+        pView->UpdateTimeElapsed(tstr);
     }
     return true;    // true means this mem func will be called again
 }
 void tController::JobStopped(int job_id) {
-    //pView->ClearLoggingDisplay();
+    pView->ClearLoggingDisplay();
     CurrentJobId = 0;
     CurrentSecs = 0;
-    //pView->SetButtonStart();
+    pView->SetButtonStart();
 }
 void tController::JobListChanged() {
     int rc = ttj::GetActiveJobs(&Jobs);
@@ -83,13 +83,13 @@ void tController::StartLogging(int index, bool use_list = true) {
         ttj::StartJob(index);
     }
 }
-void tController::StopLogging() {
+void tController::StopLogging() const {
     ttj::StopJob(CurrentJobId);
 }
 void tController::Shutdown() {
     ttj::StopCurrentJob();
 }
-void tController::GetAllJobs(vector<ttj::JobRec>* rec_list) {
+void tController::GetAllJobs(std::vector<ttj::JobRec>* rec_list) {
     rec_list->clear();
     *rec_list = Jobs;
 }

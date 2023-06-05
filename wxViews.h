@@ -60,14 +60,13 @@ class MainView : public wxFrame
 		wxButton* btnStartStop;
 		wxTimer tmrElapsed;
         dlgJobsList* dlgJobs;
-        //int ElapsedSecs = 0;
         tController* pController {};
 
 		// Virtual event handlers, overide them in your derived class
 		virtual void mniAdmin_EditJobs_Click( wxCommandEvent& event );
 		virtual void mniAdmin_EditJobHistory_Click( wxCommandEvent& event ) { event.Skip(); }
 		virtual void mniReports_HistorySummary_Click( wxCommandEvent& event ) { event.Skip(); }
-		virtual void cbJobsMru_ListDown( wxCommandEvent& event ) { event.Skip(); }
+		virtual void cbJobsMru_ListDown( wxCommandEvent& event );
 		virtual void btnStartStop_Click( wxCommandEvent& event );
 		virtual void tmrElapsed_Tick( wxTimerEvent& event );
 
@@ -77,20 +76,28 @@ class MainView : public wxFrame
 		explicit MainView( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,140 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		~MainView();
 
-        void SetController(tController*);
 
-        void ClearMruJobsList();
-        void UpdateMruJobsList(std::vector<ttj::JobRec>);
         void ClearLoggingDisplay();
         void SetLoggingDisplay(const char* display);
         void UpdateTimeElapsed(const char* time_elapsed);
-        void UpdateMruJobsList(vector<ttj::JobRec>& rec_list);
+        void ClearMruJobsList();
+        void UpdateMruJobsList(std::vector<ttj::JobRec>& rec_list);
         void SetButtonStart();
         void SetButtonStop();
         int ShowMasterJobsList();
-        int GetMruJobsSize() { return MruJobsSize; };
+        int GetMruJobsSize();
         void SetMruJobsSize(int qty);
+        void SetController(tController*);
 
+        //dlgJobs* pJobSelDlg = nullptr;
+        void ShowAllJobsForSelection();
+
+        void SummaryReport_Click();
+        //wndRpt_Summary* pSummReport;
+
+
+        //void AdminAddJob_Click();
+        //wndAddJob* pAddJob;
 
 
 };

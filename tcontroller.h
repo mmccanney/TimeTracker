@@ -7,7 +7,7 @@
 #include "wxViews.h"
 //#include <wx/timer.h>
 
-using std::vector;
+//using std::vector;
 
 //class tView;
 class MainView;
@@ -26,9 +26,9 @@ public:
     void JobLogRecChanged() override;
 
     void StartLogging(int index, bool use_short_list);
-    void StopLogging();
+    void StopLogging() const;
     void Shutdown();
-    void GetAllJobs(vector<ttj::JobRec>* rec_list);
+    void GetAllJobs(std::vector<ttj::JobRec>* rec_list);
     
     //Glib::Timer tmrSecs;
     //sigc::connection tmrConnection;
@@ -37,12 +37,12 @@ public:
 
     void SetView(MainView*);
 private:
-    vector<ttj::JobRec> Jobs;
+    std::vector<ttj::JobRec> Jobs;
 
     MainView* pView {};
 
     int CurrentJobId;
-    long CurrentSecs; 
+    int CurrentSecs;
 
 };
 

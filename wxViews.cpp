@@ -54,7 +54,7 @@ MainView::MainView(wxWindow* parent, wxWindowID id, const wxString& title, const
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Elapsed:") ), wxVERTICAL );
 
-	txtElapsed = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("0000:00:00"), wxDefaultPosition, wxDefaultSize, 0 );
+	txtElapsed = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	txtElapsed->Wrap( -1 );
 	sbSizer2->Add( txtElapsed, 0, wxALL, 10 );
 
@@ -92,8 +92,10 @@ MainView::MainView(wxWindow* parent, wxWindowID id, const wxString& title, const
 	cbJobsMru->Connect( wxEVT_COMBOBOX_DROPDOWN, wxCommandEventHandler( MainView::cbJobsMru_ListDown ), nullptr, this );
 	btnStartStop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainView::btnStartStop_Click ), nullptr, this );
 	this->Connect( wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainView::tmrElapsed_Tick ) );
-}
 
+
+    ClearLoggingDisplay();
+}
 MainView::~MainView()
 {
 	// Disconnect Events
@@ -102,18 +104,103 @@ MainView::~MainView()
 	this->Disconnect(wxID_ANY, wxEVT_TIMER, wxTimerEventHandler( MainView::tmrElapsed_Tick));
 
 }
-void MainView::tmrElapsed_Tick(wxTimerEvent& event) {
-    if (pController) pController->Time1sElapsed();
+void MainView::SetController(tController *pc) {
+    pController = pc;
 }
+
+
+
 void MainView::btnStartStop_Click(wxCommandEvent& event) {
+    // what does the button say?
     if (btnStartStop->GetLabel() == StartText) {
-        btnStartStop->SetLabel(StopText);
-        tmrElapsed.Start(1000);
+        if (cbJobsMru->GetSelection() < MruJobsSize) {
+            pController->StartLogging(cbJobsMru->GetSelection(), true);
+            tmrElapsed.Start(1000);
+        }
     }
     else {
-        btnStartStop->SetLabel(StartText);
+        pController->StopLogging();
         tmrElapsed.Stop();
     }
+}
+void MainView::ClearLoggingDisplay() {
+    txtCurrentJob->SetLabel("-- no logging --");
+    txtElapsed->SetLabel("00:00:00");
+    SetButtonStart();
+}
+void MainView::SetLoggingDisplay(const char* display) {
+    txtCurrentJob->SetLabel(display);
+}
+void MainView::UpdateTimeElapsed(const char* time_elapsed) {
+    txtElapsed->SetLabel(time_elapsed);
+}
+void MainView::SetButtonStart() {
+    btnStartStop->SetLabel(StartText);
+    cbJobsMru->Show();
+}
+void MainView::SetButtonStop() {
+    btnStartStop->SetLabel(StopText);
+    cbJobsMru->Show(false);
+}
+void MainView::SetMruJobsSize(int qty) {
+    // don't let the user select a crazy value
+    if (qty > 1 && qty < 20) MruJobsSize = qty;
+}
+int MainView::GetMruJobsSize() { return MruJobsSize; };
+void MainView::ClearMruJobsList() {
+    cbJobsMru->Clear();
+}
+void MainView::UpdateMruJobsList(std::vector<ttj::JobRec>& rec_list) {
+    if (!cbJobsMru) return;
+
+    ClearMruJobsList();
+
+    int x = 0;
+    // populate the popup menu
+    auto itr = rec_list.begin();
+    while (itr != rec_list.end() && x < MruJobsSize) {
+        ttj::JobRec j = *itr;
+        char text[MAX_FIELD_SIZE_NAME + MAX_FIELD_SIZE_DISPLAY + 4];
+        if (strlen(j.display) > 0) sprintf(text, "%s (%s)", j.display, j.name);
+        else sprintf(text, "%s", j.name);
+        cbJobsMru->Append(text);
+        itr++; x++;
+    }
+    if (MruJobsSize < rec_list.size()) cbJobsMru->Append("...");
+}
+void MainView::cbJobsMru_ListDown(wxCommandEvent& event) {
+    if (cbJobsMru->GetSelection() >= MruJobsSize) {
+        //
+    }
+}
+void MainView::ShowAllJobsForSelection() {
+    std::vector<ttj::JobRec> rec_list;
+    pController->GetAllJobs(&rec_list);
+//    if (pJobSelDlg) {
+//        pJobSelDlg->UpdateJobsList(rec_list);
+//        int res = pJobSelDlg->run();
+//        if (res == Gtk::RESPONSE_OK) {
+//            int jid = pJobSelDlg->SelectedJobId;
+//            if (jid > 0) pController->StartLogging(jid, false);
+//        }
+//        else {
+//            // clear the ... from the combo box, otherwise if the user wants to
+//            // view the "All Jobs" screen again, they can't until they select a different job
+//            pMruJobs->unset_active();
+//        }
+//
+//        pJobSelDlg->hide();
+//    }
+}
+
+
+
+
+
+
+
+void MainView::tmrElapsed_Tick(wxTimerEvent& event) {
+    if (pController) pController->Time1sElapsed();
 }
 
 void MainView::mniAdmin_EditJobs_Click(wxCommandEvent& event) {
@@ -124,71 +211,11 @@ void MainView::mniAdmin_EditJobs_Click(wxCommandEvent& event) {
     //event.Skip();
 }
 
-void MainView::SetController(tController *pc) {
-    pController = pc;
-}
-
-
-void MainView::SetMruJobsSize(int qty) {
-    // don't let the user select a crazy value
-    if (qty > 1 && qty < 20) MruJobsSize = qty;
-}
-void MainView::ClearMruJobsList() {
-    cbJobsMru->Clear();
-}
-void MainView::UpdateMruJobsList(vector<ttj::JobRec> recs) {
-    if (!pMruJobs) return;
-
-    ClearMruJobsList();
-
-    int x = 0;
-    // populate the popup menu
-    vector<ttj::JobRec>::iterator itr = rec_list.begin();
-    while (itr != rec_list.end() && x < MruJobsSize) {
-        ttj::JobRec j = *itr;
-        char text[MAX_FIELD_SIZE_NAME + MAX_FIELD_SIZE_DISPLAY + 4];
-        if (strlen(j.display) > 0) sprintf(text, "%s (%s)", j.display, j.name);
-        else sprintf(text, "%s", j.name);
-        pMruJobs->append(text);
-        itr++; x++;
-    }
-    if (MruJobsSize < rec_list.size()) pMruJobs->append("...");
-}
-
-void MainView::SetLoggingDisplay(const char* display) {
-
-    pJobLabel->set_text(display);
-}
-void MainView::UpdateTimeElapsed(const char* time_elapsed) {
-
-    pTimeLabel->set_text(time_elapsed);
-}
-
-void MainView::ShowAllJobsForSelection() {
-    vector<ttj::JobRec> rec_list;
-    pController->GetAllJobs(&rec_list);
-    if (pJobSelDlg) {
-        pJobSelDlg->UpdateJobsList(rec_list);
-        int res = pJobSelDlg->run();
-        if (res == Gtk::RESPONSE_OK) {
-            int jid = pJobSelDlg->SelectedJobId;
-            if (jid > 0) pController->StartLogging(jid, false);
-        }
-        else {
-            // clear the ... from the combo box, otherwise if the user wants to
-            // view the "All Jobs" screen again, they can't until they select a different job
-            pMruJobs->unset_active();
-        }
-
-        pJobSelDlg->hide();
-    }
-}
 
 
 
 
-
-
+//==============================================================================================
 //==============================================================================================
 
 dlgJobsList::dlgJobsList(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style)
